@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* src/style.css */
+
+/* ====================================================
+   BE-VAULT ARCHITECTURAL NOIR (OKLCH)
+   ==================================================== */
+:root {
+  --radius: 0rem;
+  /* ===== Cores extraídas do .dark theme do Lovable ===== */
+  --background: oklch(0.129 0.042 264.695);    /* Azul-marinho escuro */
+  --foreground: oklch(0.984 0.003 247.858);    /* Branco levemente azulado */
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);  /* Cinza azulado */
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(1 0 0 / 10%);                /* BRANCO 10% — a borda fina visível! */
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --neon: oklch(0.78 0.19 150);                /* Emerald status accent */
+  --neon-blue: oklch(0.75 0.15 220);
+  
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Modo claro nativo do S.O. (Inversão automática de cores) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: oklch(0.98 0 0);
+    --foreground: oklch(0.06 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.06 0 0);
+    --muted: oklch(0.95 0 0);
+    --muted-foreground: oklch(0.4 0 0);
+    --border: oklch(0.9 0 0);
+    --input: oklch(0.9 0 0);
+    --primary: oklch(0.06 0 0);
+    --primary-foreground: oklch(1 0 0);
+    /* O neon verde fica mais escuro no modo claro para dar leitura */
+    --neon: oklch(0.55 0.15 150); 
+  }
+}
+
+/* ====================================================
+   PONTES DE LIGAÇÃO PARA O LOGIN VIEW
+   ==================================================== */
+:root {
+  /* Fundo e Superfícies — valores exatos do Lovable */
+  --bg-app: var(--background);                          /* oklch(0.129...) azul-marinho */
+  --bg-panel-right: oklch(0.08 0 0);                    /* bg-[oklch(0.08_0_0)] do form */
+  --bg-panel-left: oklch(0.208 0.042 265.755);          /* --sidebar do Lovable */
+  --bg-feature-card: oklch(0.208 0.042 265.755);        /* Mesmo que sidebar */
+  --bg-feature-grid: var(--border);                     /* Mesmo que border (branco 10%) */
+  
+  /* Bordas e Textos */
+  --border-subtle: var(--border);
+  --border-focus: var(--foreground);
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-muted: var(--muted-foreground);
+  --text-accent: var(--neon);
+  
+  /* Botões e Inputs */
+  --btn-bg: var(--primary);
+  --btn-text: var(--primary-foreground);
+  --btn-hover: var(--secondary);
+  --input-bg: transparent;
+}
+
+/* ====================================================
+   RESET GLOBAL E TIPOGRAFIA
+   ==================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background, var(--background));
+  color: var(--color-foreground, var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s, color 0.3s;
+}
