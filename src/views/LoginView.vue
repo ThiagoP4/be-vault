@@ -1,17 +1,30 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
-    import { useRouter } from 'vue-router'
+    import { ref, onMounted } from 'vue'
+    import { useRouter, useRoute } from 'vue-router'
     import { signInWithEmail, signUpWithEmail, saveSecretKey, getSecretKey, generateSecretKey } from '../services/auth'
     import { deriveKey } from '../utils/crypto';
     import { setCryptoKey } from '../stores/keyStore'
+    import BackupModal from '../components/BackupModal.vue';
+
 
     const router = useRouter();
+    const route = useRoute();
 
     const email = ref('');
     const masterPassword = ref('');
     const secretKey = ref('');
     const isRegistering = ref(false);
     const errorMessage = ref('');
+    const showBackupModal = ref(false);
+    const currentKey = ref(''); 
+
+    onMounted(() => {
+        if (route.query.secret) {
+            secretKey.value = route.query.secret as string;
+            // Se o usuário veio pelo link, mudamos para a aba de "Access" e já preenchemos a chave!
+            isRegistering.value = false;
+        }
+    }); 
 
     async function handleAccess(){
         errorMessage.value = ''
@@ -21,11 +34,9 @@
                const key = generateSecretKey();
                saveSecretKey(key);
 
-               alert('Conta Criada! Sua Secret Key foi salva no navegador. Guarde ela com cuidado');
+               currentKey.value = key;
+               showBackupModal.value = true;
                
-               const saveKey = await deriveKey(masterPassword.value, key); // 'key' é a secretKey gerada acima
-               setCryptoKey(saveKey);
-               router.push('/');
             } else {
                 await signInWithEmail(email.value, masterPassword.value);
                 let storedKey = getSecretKey();
@@ -50,6 +61,11 @@
         }
     }
 
+    async function proceedToVault() {
+        const saveKey = await deriveKey(masterPassword.value, currentKey.value);
+        setCryptoKey(saveKey);
+        router.push('/');
+    }
 
 </script>
 
@@ -64,7 +80,7 @@
                     </div>
                     <div class="brand-text">
                         <h2>BE-VAULT</h2>
-                        <span>v2.0.4-SECURE</span>
+                        <span>v1.0.0-SECURE</span>
                     </div>
                 </div>
 
@@ -132,8 +148,7 @@
                             <input id="secret" type="text" v-model="secretKey" placeholder="BV-XXXXXX-XXXXXX-XXXXXXXX" />
                         </div>
                     </div>
-                </form>
-                
+
                 <div class="form-actions">
                     <button type="button" class="mode-switch" @click="isRegistering = !isRegistering">
                         {{ isRegistering ? '→ Sign into existing' : '→ Provision new vault' }}
@@ -144,6 +159,9 @@
                         <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                 </div>
+            </form>
+                
+                <p v-if="errorMessage" class="error-msg">{{ errorMessage }}</p>
 
                 <footer class="right-pane-footer">
                     <span>AES-256-GCM · Argon2id</span>
@@ -152,6 +170,11 @@
             </div>
         </div>
     </div>
+    <BackupModal 
+    :show="showBackupModal" 
+    :secretKey="currentKey"
+    @proceed="proceedToVault"
+    />
 </template>
 
 <style scoped>
@@ -470,6 +493,17 @@
 .btn-submit:hover .arrow-icon {
     transform: translateX(4px);
 }
+
+.error-msg {
+    color: var(--destructive); /* Vermelho do tema */
+    font-size: 11px;
+    font-family: var(--font-mono);
+    margin-top: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+}
+
 /* Rodapé do painel direito */
 .right-pane-footer {
     margin-top: 3rem;
