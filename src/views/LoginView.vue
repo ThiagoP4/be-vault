@@ -4,7 +4,8 @@
     import { signInWithEmail, signUpWithEmail, saveSecretKey, getSecretKey, generateSecretKey } from '../services/auth'
     import { deriveKey } from '../utils/crypto';
     import { setCryptoKey } from '../stores/keyStore'
-    import BackupModal from '../components/BackupModal.vue';
+    import BackupModal from '../components/Login/BackupModal.vue';
+    import AppLogo from '../components/AppLogo.vue'
 
 
     const router = useRouter();
@@ -75,13 +76,7 @@
         <div class="split-layout">
             <div class="left-pane">
                 <div class="login-b-header">
-                    <div class="logo-square">
-                        <div class="logo-inner"></div>
-                    </div>
-                    <div class="brand-text">
-                        <h2>BE-VAULT</h2>
-                        <span>v1.0.0-SECURE</span>
-                    </div>
+                    <AppLogo />
                 </div>
 
                 <div class="hero-content">
@@ -113,7 +108,7 @@
             <div class="right-pane">
                 <div class="right-pane-header">
                     <span class="eyebrow">
-                        {{ isRegistering ? 'Provision Vault' : 'Authenticate Session' }}
+                        {{ isRegistering ? 'Create Vault' : 'Authenticate Session' }}
                     </span>
                     <span class="status-indicator">
                         <span class="dot"></span>
@@ -151,10 +146,10 @@
 
                 <div class="form-actions">
                     <button type="button" class="mode-switch" @click="isRegistering = !isRegistering">
-                        {{ isRegistering ? '→ Sign into existing' : '→ Provision new vault' }}
+                        {{ isRegistering ? '→ Sign into existing' : '→ Create new vault' }}
                     </button>
                      <button type="submit" class="btn-submit">
-                        {{ isRegistering ? 'Provision' : 'Unseal' }}
+                        {{ isRegistering ? 'Create' : 'Open' }}
                         <!-- Ícone de seta apontando pra direita -->
                         <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
@@ -174,6 +169,7 @@
     :show="showBackupModal" 
     :secretKey="currentKey"
     @proceed="proceedToVault"
+    @close="showBackupModal = false"
     />
 </template>
 
@@ -203,7 +199,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid var(--border);
 }
 
 .login-b-header {
@@ -323,14 +319,6 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 2.5rem;
-}
-
-.eyebrow {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-muted); /* <-- ESSA É A COR CERTA CLARINHA */
 }
 
 .status-indicator {

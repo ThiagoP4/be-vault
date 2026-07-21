@@ -94,3 +94,14 @@ body {
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s, color 0.3s;
 }
+
+/* ====================================================
+   CLASSES UTILITÁRIAS GLOBAIS
+   ==================================================== */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}

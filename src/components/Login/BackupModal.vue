@@ -8,9 +8,9 @@ const props = defineProps<{
     secretKey: string;
 }>();
 
-// Avisamos o LoginView quando o usuário clicar em "Entrar no Cofre"
 const emit = defineEmits<{
-    (e: 'proceed'): void
+    (e: 'proceed'): void;
+    (e: 'close'): void;
 }>();
 
 const hasConfirmedBackup = ref(false);
@@ -55,6 +55,9 @@ function downloadEmergencyKit(){
         </div>
 
         <div class="modal-actions">
+            <button type="button" class="btn-outline" @click="emit('close')">
+                Voltar
+            </button>
             <button type="button" class="btn-outline" @click="copyKey">
                 Copiar Chave
             </button>
