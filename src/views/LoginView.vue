@@ -19,7 +19,13 @@
     const showBackupModal = ref(false);
     const currentKey = ref(''); 
 
+    const hasStoredSecret = ref(false);
+
     onMounted(() => {
+        if (getSecretKey()) {
+            hasStoredSecret.value = true;
+        }
+
         if (route.query.secret) {
             secretKey.value = route.query.secret as string;
             // Se o usuário veio pelo link, mudamos para a aba de "Access" e já preenchemos a chave!
@@ -52,7 +58,7 @@
                 };
 
                 const saveKey = await deriveKey(masterPassword.value, storedKey!);
-                setCryptoKey(saveKey);
+                await setCryptoKey(saveKey);
                 router.push('/')
 
                 
@@ -64,7 +70,7 @@
 
     async function proceedToVault() {
         const saveKey = await deriveKey(masterPassword.value, currentKey.value);
-        setCryptoKey(saveKey);
+        await setCryptoKey(saveKey);
         router.push('/');
     }
 
@@ -133,7 +139,7 @@
                         </div>
                         <input id="master" type="password" v-model="masterPassword" placeholder="••••••••••••" required />
                     </div>
-                    <div class="input-group" v-if="!isRegistering">
+                    <div class="input-group" v-if="!isRegistering && !hasStoredSecret">
                         <div class="label-row">
                             <label for="secret" class="eyebrow">Secret Key</label>
                             <span class="hint">Required on new devices</span>
@@ -142,6 +148,13 @@
                             <svg class="key-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
                             <input id="secret" type="text" v-model="secretKey" placeholder="BV-XXXXXX-XXXXXX-XXXXXXXX" />
                         </div>
+                    </div>
+
+                    <!-- Mensagem amigável de dispositivo reconhecido (opcional) -->
+                    <div class="input-group" v-if="!isRegistering && hasStoredSecret">
+                         <div class="label-row" style="color: var(--neon); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;">
+                             <span class="dot" style="margin-right: 6px;"></span> Device Recognized
+                         </div>
                     </div>
 
                 <div class="form-actions">

@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { Globe, Copy, MoreHorizontal } from '@lucide/vue'
+import type { VaultItem } from '../../stores/vaultStore'
+
+const props = defineProps<{
+    data: VaultItem
+}>()
 </script>
 
 <template>
@@ -14,8 +19,8 @@ import { Globe, Copy, MoreHorizontal } from '@lucide/vue'
             </div>
         </div>
         <div class="card-mid">
-            <h3>GitHub</h3>
-            <p>octocat@bevault.io</p>
+            <h3>{{ props.data.service_name }}</h3>
+            <p>{{ props.data.username }}</p>
         </div>
         <div class="card-bottom">
             <span class="password-dots">.........</span>
@@ -30,11 +35,9 @@ import { Globe, Copy, MoreHorizontal } from '@lucide/vue'
             </div>
         </div>
     </div>
-
 </template>
 
 <style scoped>
-
 .vault-card {
     background-color: var(--bg-panel-left);
     padding: 1.5rem;
@@ -66,7 +69,6 @@ import { Globe, Copy, MoreHorizontal } from '@lucide/vue'
     align-items: flex-end;
     gap: 4px;
 }
-
 
 .card-mid h3 {
     font-size: 1rem;
@@ -111,5 +113,4 @@ import { Globe, Copy, MoreHorizontal } from '@lucide/vue'
 .action-btn:hover {
     color: var(--text-primary);
 }
-
 </style>

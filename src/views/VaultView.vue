@@ -1,7 +1,35 @@
 <script setup lang="ts">
+    import { onMounted } from 'vue'
+    import { useRouter } from 'vue-router'
+    import { useVaultStore } from '../stores/vaultStore'
+    import { activeCryptoKey, restoreCryptoKey } from '../stores/keyStore'
+    import { fetchAndDecryptVaultItems } from '../services/vault'
     import SideBar from '../components/Vaults/SidebarVault.vue'
     import HeaderVault from '../components/Vaults/HeaderVault.vue'
     import CardsVault from '../components/Vaults/CardVault.vue'
+
+    const vaultStore = useVaultStore()
+    const router = useRouter()
+
+    onMounted(async () => {
+        await restoreCryptoKey(); // Tenta restaurar do SessionStorage primeiro
+
+        // Se a chave não estiver na memória (ex: o usuário recarregou a página), volta pro login.
+        if (!activeCryptoKey.value) {
+            console.warn("Chave criptográfica não encontrada. Redirecionando para login...")
+            router.push('/login')
+            return
+        }
+
+        try {
+            // Quando a tela carregar, busca e descriptografa tudo
+            const items = await fetchAndDecryptVaultItems();
+            // Salva na memória do Pinia
+            vaultStore.setItems(items);
+        } catch (error) {
+            console.error("Erro ao carregar o cofre:", error);
+        }
+    })
 </script>
 
 <template>
@@ -15,7 +43,10 @@
                 <span>ENTRIES FOUND</span>
             </div>
             <div class="cards-grid">
-                <CardsVault />
+                <CardsVault
+                    v-for="item in vaultStore.items"
+                    :key="item.id_vault"
+                    :data="item" />
             </div>
         </div>
         </main>

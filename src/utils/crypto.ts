@@ -94,3 +94,19 @@ export async function decryptData(encryptedBase64: string, key: CryptoKey): Prom
     const dec = new TextDecoder();
     return dec.decode(decryptedBuffer);
 }
+
+export async function exportCryptoKey(key: CryptoKey): Promise<string> {
+    const exported = await window.crypto.subtle.exportKey('raw', key);
+    return arrayBufferToBase64(exported);
+}
+
+export async function importCryptoKey(base64: string): Promise<CryptoKey> {
+    const buffer = base64ToArrayBuffer(base64);
+    return await window.crypto.subtle.importKey(
+        'raw',
+        buffer,
+        { name: 'AES-GCM' },
+        true,
+        ['encrypt', 'decrypt']
+    );
+}
