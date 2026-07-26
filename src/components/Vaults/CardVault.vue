@@ -1,10 +1,26 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Globe, Copy, Pencil, Trash } from '@lucide/vue'
 import type { VaultItem } from '../../stores/vaultStore'
+
+const isCopied = ref(false);
 
 const props = defineProps<{
     data: VaultItem
 }>()
+
+const copyPassword = async () => {
+    if(props.data.password) {
+        await navigator.clipboard.writeText(props.data.password)
+        isCopied.value = true
+
+        setTimeout(() => {
+            isCopied.value = false
+        }, 2000)
+    } else {
+        alert("Não há senha salva para este item")
+    }
+}
 
 const emit = defineEmits(['edit', 'delete'])
 </script>
@@ -28,8 +44,9 @@ const emit = defineEmits(['edit', 'delete'])
             <span class="password-dots">.........</span>
 
             <div class="actions">
-                <button class="action-btn">
-                    <Copy :size="12" /> COPY KEY
+                <button class="action-btn" @click="copyPassword">
+                    <Copy :size="12" />
+                    {{ isCopied ? 'COPIED' : 'COPY KEY' }}
                 </button>
                 <button class="action-btn" @click="emit('edit', props.data)">
                     <Pencil :size="14" />

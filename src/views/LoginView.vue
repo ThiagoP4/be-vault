@@ -95,7 +95,7 @@
                 <div class="hero-content">
                     <h1 class="hero-title">A single<br><i>obsidian</i> ledger<br>for every key.</h1>
                     <p class="hero-desc">
-                        Zero-knowledge storage for credentials, cards and notes. Sealed with AES-256-GCM and an Argon2id-derived master key.
+                        Zero-knowledge storage for credentials, cards and notes. Sealed with AES-256-GCM and a PBKDF2-derived master key.
                     </p>
                 </div>
 
@@ -106,7 +106,7 @@
                     </div>
                     <div class="feature-card">
                         <div class="feat-num">02</div>
-                        <p>Argon2id KDF</p>
+                        <p>PBKDF2 KDF</p>
                     </div>
                     <div class="feature-card">
                         <div class="feat-num">03</div>
@@ -179,7 +179,7 @@
                 <p v-if="errorMessage" class="error-msg">{{ errorMessage }}</p>
 
                 <footer class="right-pane-footer">
-                    <span>AES-256-GCM · Argon2id</span>
+                    <span>AES-256-GCM · PBKDF2</span>
                     <span>End-to-end</span>
                 </footer>
             </div>
