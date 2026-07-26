@@ -1,12 +1,15 @@
 <script setup lang="ts">
+    import { ref } from 'vue'
     import AppLogo from '../AppLogo.vue' // Ajuste o caminho se a Sidebar estiver dentro da pasta Vaults
-    import { Lock } from '@lucide/vue'
+    import { Lock, Menu, X } from '@lucide/vue'
+
+    const isMenuOpen = ref(false)
 </script>
 <template>
 
  <aside class="sidebar">
     <div class="brand"><AppLogo /></div>
-    <nav class="menu-section">
+    <nav class="menu-section" :class="{ 'is-open': isMenuOpen }">
         <span class="eyebrow">Storage</span>
         <ul>
             <li class="active">All items</li>
@@ -25,10 +28,16 @@
                 <div class="mk-progress"></div>
             </div>
         </div>
-        <button class="btn-lock">
-            <span class="eyebrow">LOCK VAULT</span>
-            <Lock :size="14" />
-        </button>
+        <div class="mobile-actions">
+            <button class="btn-lock">
+                <span class="eyebrow">LOCK VAULT</span>
+                <Lock :size="14" />
+            </button>
+            <button class="btn-burger" @click="isMenuOpen = !isMenuOpen">
+                <Menu v-if="!isMenuOpen" :size="20" />
+                <X v-else :size="20" />
+            </button>
+        </div>
     </div>
 </aside>
 
@@ -94,6 +103,28 @@
     gap: 1rem;
 }
 
+.mobile-actions {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.btn-burger {
+    display: none; /* Escondido no desktop */
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-burger:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
 /* Cartão Preto do Master Key */
 .master-key-card {
     background-color: oklch(0.05 0 0); /* Um preto/fundo super escuro */
@@ -135,6 +166,7 @@
     color: var(--text-muted);
     cursor: pointer;
     transition: all 0.2s;
+    width: 100%; /* Faz o botão esticar no PC */
 }
 .btn-lock:hover {
     color: var(--text-primary);
@@ -145,5 +177,89 @@
     color: inherit;
     margin: 0;
 }
+
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================= */
+@media (max-width: 768px) {
+    .sidebar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas: 
+            "logo actions"
+            "menu menu";
+        gap: 1.25rem;
+        padding: 1.25rem 1.25rem 0 1.25rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .brand { grid-area: logo; align-self: center; }
+    
+    .sidebar-footer { 
+        grid-area: actions; 
+        margin-top: 0;
+        align-self: center;
+    }
+    
+    .menu-section { 
+        grid-area: menu; 
+        display: none; /* Escondido por padrão no mobile */
+    }
+    .menu-section.is-open {
+        display: block; /* Mostra quando clica no menu burguer */
+    }
+    
+    .menu-section .eyebrow { display: none; }
+    
+    .menu-section ul {
+        flex-direction: row;
+        gap: 0.75rem;
+        margin-top: 0;
+        overflow-x: auto;
+        padding-bottom: 1rem; /* espaço para scroll */
+    }
+    
+    /* Estilo "Pill" moderno e escuro */
+    .menu-section li {
+        white-space: nowrap;
+        padding: 0.4rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+    }
+
+    .menu-section li::before {
+        display: none; /* Tira o quadradinho */
+    }
+
+    .menu-section li.active {
+        background: rgba(255, 255, 255, 0.1); /* Um cinza translúcido chique */
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text-primary);
+    }
+
+    .master-key-card { display: none; }
+    
+    .btn-lock { 
+        padding: 0.5rem 0.75rem; 
+        border-radius: 6px;
+        gap: 0.5rem; 
+    }
+
+    .btn-burger {
+        display: flex; /* Mostra no mobile */
+        padding: 0.5rem;
+        border-radius: 6px;
+    }
+    
+    .mobile-actions {
+        gap: 0.75rem;
+    }
+}
+
 
 </style>

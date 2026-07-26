@@ -67,4 +67,37 @@ const isEntryOpen = ref(false);
     opacity: 0.85; /* Dá um leve brilho ao passar o mouse */
 }
 
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================= */
+@media (max-width: 768px) {
+    .topbar {
+        padding: 1rem 1.25rem;
+        display: flex;
+        flex-direction: row; /* Mantém na mesma linha! */
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .search-box {
+        flex: 1; /* Ocupa todo o espaço que sobrar */
+        background: rgba(255, 255, 255, 0.03);
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border);
+    }
+
+    .search-box input {
+        font-size: 12px;
+    }
+
+    .btn-new {
+        width: auto; /* Não ocupa a tela toda */
+        padding: 0.6rem 0.85rem;
+        white-space: nowrap;
+        font-size: 10px;
+    }
+}
+
+
+
 </style>

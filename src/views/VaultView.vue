@@ -104,5 +104,32 @@
     margin-top: 2rem;
 }
 
+/* =========================================
+   RESPONSIVIDADE (TABLET)
+   ========================================= */
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: 1fr; /* Força 1 coluna em tablets para não esmagar o card */
+    }
+}
+
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================= */
+@media (max-width: 768px) {
+    .vault-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+    .content-wrapper {
+        padding: 1.25rem; /* Menos margem morta nas pontas */
+    }
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1.25rem;
+    }
+}
+
 
 </style>

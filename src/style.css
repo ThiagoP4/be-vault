@@ -34,24 +34,6 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* Modo claro nativo do S.O. (Inversão automática de cores) */
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: oklch(0.98 0 0);
-    --foreground: oklch(0.06 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.06 0 0);
-    --muted: oklch(0.95 0 0);
-    --muted-foreground: oklch(0.4 0 0);
-    --border: oklch(0.9 0 0);
-    --input: oklch(0.9 0 0);
-    --primary: oklch(0.06 0 0);
-    --primary-foreground: oklch(1 0 0);
-    /* O neon verde fica mais escuro no modo claro para dar leitura */
-    --neon: oklch(0.55 0.15 150); 
-  }
-}
-
 /* ====================================================
    PONTES DE LIGAÇÃO PARA O LOGIN VIEW
    ==================================================== */

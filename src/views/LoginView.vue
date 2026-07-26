@@ -14,7 +14,7 @@
     const email = ref('');
     const masterPassword = ref('');
     const secretKey = ref('');
-    const isRegistering = ref(false);
+    const isRegistering = ref(true);
     const errorMessage = ref('');
     const showBackupModal = ref(false);
     const currentKey = ref(''); 
@@ -29,6 +29,7 @@
 
         if (getSecretKey()) {
             hasStoredSecret.value = true;
+            isRegistering.value = false;
         }
 
         if (route.query.secret) {
@@ -525,6 +526,41 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: oklch(0.704 0.04 256.788 / 0.6);
+}
+
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================= */
+@media (max-width: 768px) {
+    /* Transforma as duas colunas em uma só */
+    .split-layout {
+        grid-template-columns: 1fr;
+    }
+    /* Diminui a borda de fora pra ganhar espaço na tela */
+    .login-wrapper {
+        padding: 1rem;
+    }
+    /* Ajusta o painel esquerdo para mostrar só a logo */
+    .left-pane {
+        padding: 1.5rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    /* Diminui os espaçamentos gigantes do painel do formulário */
+    .right-pane {
+        padding: 1.5rem;
+    }
+    .right-pane-header {
+        margin-bottom: 1.5rem;
+    }
+    .auth-titles {
+        margin-bottom: 1.5rem;
+    }
+    /* Esconde o texto gigante e os cards de features no celular */
+    .hero-content, 
+    .features-grid {
+        display: none;
+    }
 }
 
 </style>
