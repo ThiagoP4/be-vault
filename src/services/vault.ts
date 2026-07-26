@@ -72,3 +72,29 @@ export async function addEncryptedVaultItem(service_name: string, username: stri
         created_at: data.created_at
     };
 }
+
+export async function deleteVaultItem(id: string) {
+    const { error } = await supabase
+        .from('vault_items')
+        .delete()
+        .eq('id_vault', id);
+
+    if (error) throw error;
+}
+
+export async function updateEncryptedVaultItem(id: string, service_name: string, username: string, plainPassword?: string) {
+    if (!activeCryptoKey.value) throw new Error("Cofre trancado.");
+    const updateData: any = { service_name, username };
+    
+    // Só criptografa a senha de novo se o usuário tiver digitado uma senha nova
+    if (plainPassword) {
+        updateData.encrypted_data = await encryptData(plainPassword, activeCryptoKey.value);
+    }
+
+    const { error } = await supabase
+        .from('vault_items')
+        .update(updateData)
+        .eq('id_vault', id);
+    if (error) throw error;
+
+}

@@ -3,13 +3,36 @@
     import { useRouter } from 'vue-router'
     import { useVaultStore } from '../stores/vaultStore'
     import { activeCryptoKey, restoreCryptoKey } from '../stores/keyStore'
-    import { fetchAndDecryptVaultItems } from '../services/vault'
+    import { fetchAndDecryptVaultItems, deleteVaultItem } from '../services/vault'
     import SideBar from '../components/Vaults/SidebarVault.vue'
     import HeaderVault from '../components/Vaults/HeaderVault.vue'
     import CardsVault from '../components/Vaults/CardVault.vue'
+    import EditEntryModal from '../components/Vaults/EditEntryModal.vue'
+    import { ref } from 'vue'
+    import type { VaultItem } from '../stores/vaultStore'
 
     const vaultStore = useVaultStore()
     const router = useRouter()
+    
+    const editingItem = ref<VaultItem | null>(null)
+    const isEditModalOpen = ref(false)
+
+    const handleDelete = async (id: string) => {
+        if(confirm("Tem certeza que deseja deletar esta senha?")) {
+            try {
+                await deleteVaultItem(id)
+                vaultStore.removeItem(id)
+            } catch (error) {
+                console.error("Erro ao deletar:", error)
+                alert("Erro ao deletar a senha.")
+            }
+        }
+    }
+
+    const handleEdit = (item: VaultItem) => {
+        editingItem.value = item
+        isEditModalOpen.value = true
+    }
 
     onMounted(async () => {
         await restoreCryptoKey(); // Tenta restaurar do SessionStorage primeiro
@@ -46,9 +69,16 @@
                 <CardsVault
                     v-for="item in vaultStore.items"
                     :key="item.id_vault"
-                    :data="item" />
+                    :data="item"
+                    @edit="handleEdit"
+                    @delete="handleDelete" />
             </div>
         </div>
+        <EditEntryModal 
+            v-if="isEditModalOpen && editingItem" 
+            :item="editingItem" 
+            @close="isEditModalOpen = false" 
+        />
         </main>
     </div>
 

@@ -1,30 +1,41 @@
 <script setup lang="ts">
     import EntryForm from '../Shared/EntryForm.vue';
-    import { addEncryptedVaultItem } from '../../services/vault';
+    import { updateEncryptedVaultItem } from '../../services/vault';
     import { useVaultStore } from '../../stores/vaultStore'
+    import type { VaultItem } from '../../stores/vaultStore';
+
+    const props = defineProps<{
+        item: VaultItem
+    }>();
 
     const emit = defineEmits(['close']);
     const vaultStore = useVaultStore();
 
-    const handleSave = async (data: any) => {
-        if(!data.serviceName || !data.identity || !data.password) {
+    const handleUpdate = async (data: any) => {
+        if(!data.serviceName || !data.identity) {
             alert("Preencha todos os campos obrigatórios!");
             return;
         }
 
         try {
-            const novoItem = await addEncryptedVaultItem(
+            await updateEncryptedVaultItem(
+                props.item.id_vault,
                 data.serviceName,
                 data.identity,
-                data.password
+                data.password // If it's empty, the backend ignores it
             );
         
-            vaultStore.addItem(novoItem);
+            vaultStore.updateItem({
+                ...props.item,
+                service_name: data.serviceName,
+                username: data.identity,
+                password: data.password || props.item.password,
+            });
             emit('close');
         }
         catch (error) {
             console.error(error);
-            alert("Erro ao salvar senha no supabase;")
+            alert("Erro ao atualizar senha no supabase;")
         }
     }
 </script>
@@ -33,18 +44,18 @@
     <div class="modal-overlay">
         <div class="modal-box">
             <header class="modal-header">
-                <h2>NEW ENTRY</h2>
+                <h2>EDIT ENTRY</h2>
                 <div class="header-right">
                     <span class="watermark">PROVISION</span>
                     <button class="btn-close" @click="$emit('close')"></button>
                 </div>
             </header>
             <div class="modal-body">
-               <EntryForm @submit="handleSave" />
+               <EntryForm :initialData="props.item" @submit="handleUpdate" />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" @click="$emit('close')">CANCEL</button>
-                <button type="submit" class="btn-seal" form="entryForm">SEAL ENTRY</button>
+                <button type="submit" class="btn-seal" form="entryForm">UPDATE ENTRY</button>
             </div>
         </div>
     </div>

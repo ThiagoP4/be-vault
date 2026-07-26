@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { Globe, Copy, MoreHorizontal } from '@lucide/vue'
+import { Globe, Copy, Pencil, Trash } from '@lucide/vue'
 import type { VaultItem } from '../../stores/vaultStore'
 
 const props = defineProps<{
     data: VaultItem
 }>()
+
+const emit = defineEmits(['edit', 'delete'])
 </script>
 
 <template>
@@ -29,9 +31,12 @@ const props = defineProps<{
                 <button class="action-btn">
                     <Copy :size="12" /> COPY KEY
                 </button>
-                <div class="action-btn">
-                    <MoreHorizontal :size="14" />
-                </div>
+                <button class="action-btn" @click="emit('edit', props.data)">
+                    <Pencil :size="14" />
+                </button>
+                <button class="action-btn trash-btn" @click="emit('delete', props.data.id_vault)">
+                    <Trash :size="14" />
+                </button>
             </div>
         </div>
     </div>

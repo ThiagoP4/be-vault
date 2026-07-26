@@ -20,8 +20,19 @@ export const useVaultStore = defineStore('vault', () => {
         items.value.unshift(newItem);
     }
     
+    function removeItem(id: string) {
+        items.value = items.value.filter(item => item.id_vault !== id);
+    }
+
+    function updateItem(updatedItem: VaultItem) {
+        const index = items.value.findIndex(item => item.id_vault === updatedItem.id_vault);
+        if (index !== -1) {
+            items.value[index] = updatedItem;
+        }
+    }
+    
     function clearVault() {
         items.value = []
     }
-    return { items, setItems, clearVault, addItem }
+    return { items, setItems, addItem, removeItem, updateItem, clearVault }
 })
