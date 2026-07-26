@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Search } from '@lucide/vue'
+import NewEntry from '../Vaults/NewEntryModal.vue'
+
+const isEntryOpen = ref(false);
+
 </script>
 
 <template>
@@ -8,7 +13,8 @@ import { Search } from '@lucide/vue'
             <Search />
         <input type="text" placeholder="Search your passwords..." />
     </div>
-    <button class="btn-new"> + NEW ENTRY </button>
+    <button class="btn-new" @click="isEntryOpen = true"> + NEW ENTRY </button>
+    <NewEntry v-if="isEntryOpen" @close="isEntryOpen = false"/>
     </header>
 
 </template>

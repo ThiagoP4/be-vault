@@ -15,9 +15,13 @@ export const useVaultStore = defineStore('vault', () => {
     function setItems(newItems: VaultItem[]) {
         items.value = newItems;
     }
+
+    function addItem(newItem: VaultItem) {
+        items.value.unshift(newItem);
+    }
     
     function clearVault() {
         items.value = []
     }
-    return { items, setItems, clearVault }
+    return { items, setItems, clearVault, addItem }
 })

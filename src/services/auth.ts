@@ -43,3 +43,11 @@ export function saveSecretKey(key: string) {
 export function getSecretKey(): string | null {
     return localStorage.getItem('be_vault_secret_key');
 }
+
+export function saveUserEmail(email: string) {
+    localStorage.setItem('be_vault_user_email', email);
+}
+
+export function getUserEmail(): string | null {
+    return localStorage.getItem('be_vault_user_email');
+}

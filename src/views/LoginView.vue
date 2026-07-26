@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
-    import { signInWithEmail, signUpWithEmail, saveSecretKey, getSecretKey, generateSecretKey } from '../services/auth'
+    import { signInWithEmail, signUpWithEmail, saveSecretKey, getSecretKey, generateSecretKey, saveUserEmail, getUserEmail } from '../services/auth'
     import { deriveKey } from '../utils/crypto';
     import { setCryptoKey } from '../stores/keyStore'
     import BackupModal from '../components/Login/BackupModal.vue';
@@ -22,6 +22,11 @@
     const hasStoredSecret = ref(false);
 
     onMounted(() => {
+        const savedEmail = getUserEmail();
+        if (savedEmail) {
+            email.value = savedEmail;
+        }
+
         if (getSecretKey()) {
             hasStoredSecret.value = true;
         }
@@ -38,6 +43,7 @@
         try {
             if(isRegistering.value) {
                await signUpWithEmail(email.value, masterPassword.value);
+               saveUserEmail(email.value);
                const key = generateSecretKey();
                saveSecretKey(key);
 
@@ -46,6 +52,7 @@
                
             } else {
                 await signInWithEmail(email.value, masterPassword.value);
+                saveUserEmail(email.value);
                 let storedKey = getSecretKey();
                 
                 if(!storedKey && !secretKey.value) {
