@@ -43,11 +43,7 @@
         errorMessage.value = ''
         try {
             if(isRegistering.value) {
-               await signUpWithEmail(email.value, masterPassword.value);
-               saveUserEmail(email.value);
                const key = generateSecretKey();
-               saveSecretKey(key);
-
                currentKey.value = key;
                showBackupModal.value = true;
                
@@ -77,9 +73,22 @@
     }
 
     async function proceedToVault() {
-        const saveKey = await deriveKey(masterPassword.value, currentKey.value);
-        await setCryptoKey(saveKey);
-        router.push('/');
+        try {
+            errorMessage.value = '';
+            
+            await signUpWithEmail(email.value, masterPassword.value);
+            
+            // Só salva as credenciais locais depois de confirmar o Supabase
+            saveUserEmail(email.value);
+            saveSecretKey(currentKey.value);
+            
+            const saveKey = await deriveKey(masterPassword.value, currentKey.value);
+            await setCryptoKey(saveKey);
+            router.push('/');
+        } catch (error: any) {
+            errorMessage.value = error.message;
+            showBackupModal.value = false; // Fecha o modal para o usuário ver o erro
+        }
     }
 
 </script>
