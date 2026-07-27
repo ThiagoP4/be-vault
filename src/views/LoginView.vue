@@ -351,25 +351,6 @@
     margin-bottom: 2.5rem;
 }
 
-.status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
-.dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: var(--neon);
-    box-shadow: 0 0 6px var(--neon);
-}
-
 .auth-titles {
     margin-bottom: 2.5rem;
 }

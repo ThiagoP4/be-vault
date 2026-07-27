@@ -15,6 +15,11 @@ const router = createRouter({
       name: 'home',
       // Carrega o arquivo do Cofre (Dashboard)
       component: () => import('../views/VaultView.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('../views/NotFoundView.vue')
     }
   ]
 })
