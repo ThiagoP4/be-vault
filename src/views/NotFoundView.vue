@@ -192,11 +192,8 @@ onMounted(() => {
            :class="['digit', locked[i] ? 'digit-locked' : 'digit-scrambling']"
           >{{ d }}</span>
         </div>
-        <div class="status-pill pill-top">
-          {{ locked[2] ? "◇ ENTRY NOT FOUND" : "◇ SCANNING LEDGER" }}
-        </div>
         <div class="status-pill pill-bottom">
-          0x404 · DECRYPT FAILED
+          0x404 · ENTRY NOT FOUND
         </div>
       </div>
       <div class="text-content">
@@ -252,7 +249,7 @@ onMounted(() => {
 <style scoped>
 .not-found-wrapper {
   position: relative;
-  min-height: 100vh;
+  height: 100vh; /* Força 100vh para remover barra de rolagem do body */
   width: 100%;
   overflow: hidden;
   background-color: var(--bg-app);
@@ -273,7 +270,7 @@ onMounted(() => {
   z-index: 10;
   margin: 0 auto;
   display: flex;
-  min-height: calc(100vh - 9rem);
+  height: calc(100vh - 9rem);
   max-width: 72rem;
   flex-direction: column;
   align-items: center;
@@ -285,15 +282,18 @@ onMounted(() => {
 .vault-dial {
   position: relative;
   display: flex;
-  height: 340px;
-  width: 340px;
+  height: min(340px, 35vh);
+  width: min(340px, 35vh);
   align-items: center;
   justify-content: center;
   user-select: none;
 }
 
 @media (min-width: 768px) {
-  .vault-dial { height: 420px; width: 420px; }
+  .vault-dial { 
+    height: min(420px, 35vh); 
+    width: min(420px, 35vh); 
+  }
 }
 
 .ring-outer {
@@ -312,8 +312,8 @@ onMounted(() => {
 }
 .center-pulse {
   position: absolute;
-  height: 14rem;
-  width: 14rem;
+  height: 60%;
+  width: 60%;
   border-radius: 50%;
   border: 1px solid var(--destructive);
   opacity: 0.2;
@@ -333,7 +333,7 @@ onMounted(() => {
   line-height: 1;
   font-variant-numeric: tabular-nums;
   transition: color 0.3s;
-  font-size: clamp(6rem, 18vw, 10rem);
+  font-size: clamp(3rem, 10vh, 8rem);
 }
 .digit-locked {
   color: var(--text-primary);
@@ -353,10 +353,9 @@ onMounted(() => {
   font-size: 9px;
   letter-spacing: 0.4em;
 }
-.pill-top { top: -0.75rem; color: var(--text-muted); }
-.pill-bottom { bottom: -0.75rem; color: var(--destructive); opacity: 0.8; }
+.pill-bottom { bottom: -1.25rem; color: var(--destructive); opacity: 0.8; }
 .text-content {
-  margin-top: 2.5rem;
+  margin-top: min(3rem, 5vh);
   max-width: 36rem;
   display: flex;
   flex-direction: column;
@@ -376,9 +375,9 @@ onMounted(() => {
    TERMINAL E BOTÕES
    ======================== */
 .terminal {
-  margin-top: 2.5rem;
+  margin-top: min(3rem, 5vh);
   width: 100%;
-  max-width: 36rem;
+  max-width: 48rem;
   border: 1px solid var(--border);
   background-color: rgba(0, 0, 0, 0.5);
   text-align: left;
@@ -390,40 +389,41 @@ onMounted(() => {
   align-items: center;
   gap: 0.5rem;
   border-bottom: 1px solid var(--border);
-  padding: 0.5rem 0.75rem;
-  font-size: 10px;
-  letter-spacing: 0.3em;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
   color: var(--text-muted);
 }
-.term-dot { height: 8px; width: 8px; border-radius: 50%; opacity: 0.7; }
+.term-dot { height: 12px; width: 12px; border-radius: 50%; opacity: 0.7; }
 .dot-red { background-color: var(--destructive); }
 .dot-yellow { background-color: #fbbf24; }
 .dot-green { background-color: #34d399; }
 .term-title { margin-left: 0.75rem; }
 
 .terminal-body {
-  padding: 1rem;
-  font-size: 0.75rem;
-  line-height: 1.5rem;
+  padding: 1.5rem;
+  min-height: 13rem;
+  font-size: 0.875rem;
+  line-height: 1.75rem;
   color: var(--text-primary);
 }
 .term-user { color: #34d399; }
 .term-colon { color: var(--text-muted); }
 .term-cursor {
   display: inline-block;
-  height: 0.75rem;
-  width: 6px;
+  height: 0.875rem;
+  width: 8px;
   transform: translateY(2px);
   background-color: var(--text-primary);
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  margin-left: 2px;
+  margin-left: 4px;
 }
 .term-error { margin-top: 0.5rem; color: var(--destructive); }
 .term-hint { color: var(--text-muted); }
 
 /* Actions */
 .action-buttons {
-  margin-top: 2rem;
+  margin-top: 3rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
