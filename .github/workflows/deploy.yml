@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       # 3. Instala as dependências e faz o Build do Vue (gera a pasta dist/)
       - name: Install and Build
