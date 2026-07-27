@@ -35,5 +35,5 @@ jobs:
           username: ${{ secrets.ORACLE_USERNAME }} # Seu usuário (geralmente ubuntu ou opc)
           key: ${{ secrets.ORACLE_SSH_KEY }} # Sua chave privada de acesso SSH
           source: "dist/"
-          target: "/home/ubuntu/be-vault" # A pasta do Host que está mapeada no Docker (Volume)
+          target: "/home/ubuntu/be-vault/dist" # A pasta do Host que está mapeada no Docker (Volume)
           strip_components: 1 # Remove a subpasta "dist" e manda só o conteúdo dentro dela
