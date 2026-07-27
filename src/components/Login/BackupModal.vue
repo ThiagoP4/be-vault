@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import QrcodeVue from 'qrcode.vue';
+import jsPDF from 'jspdf';
+import { ArrowLeft } from '@lucide/vue';
 
 // Recebemos do LoginView a chave e se o modal deve aparecer
 const props = defineProps<{
     show: boolean;
     secretKey: string;
+    email: string;
 }>();
 
 const emit = defineEmits<{
@@ -16,8 +19,8 @@ const emit = defineEmits<{
 const hasConfirmedBackup = ref(false);
 
 const qrCodeUrl = computed(() => {
-    // Monta a URL completa do site passando a chave secreta pela query string
-    return `${window.location.origin}?secret=${encodeURIComponent(props.secretKey)}`;
+    // Monta a URL completa do site passando a chave secreta e o email pela query string
+    return `${window.location.origin}?secret=${encodeURIComponent(props.secretKey)}&email=${encodeURIComponent(props.email)}`;
 });
 
 function copyKey(){
@@ -25,11 +28,84 @@ function copyKey(){
     alert('Chave copiada para a área de transferência!');
 }
 
+function downloadTxt() {
+    const element = document.createElement('a');
+    const content = `Be-Vault Emergency Kit\n\nSecret Key:\n${props.secretKey}\n\nGuarde este arquivo em um local seguro. Ele é a única forma de recuperar seu acesso.`;
+    const file = new Blob([content], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "be-vault-recovery.txt";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+
 function downloadEmergencyKit(){
-    // Dispara a janela de impressão nativa do navegador
-    // O CSS @media print (no final deste arquivo) cuida de esconder o resto do app
-    // e mostrar apenas o cartão na folha A4 em alta qualidade.
-    window.print();
+    const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4"
+    });
+
+    // Fundo da página inteira (opcional, para dar um contraste legal)
+    doc.setFillColor(15, 15, 15);
+    doc.rect(0, 0, 210, 297, 'F');
+
+    // Fundo do Cartão (.emergency-kit)
+    doc.setFillColor(26, 26, 26); // #1a1a1a
+    doc.setDrawColor(51, 51, 51); // #333333
+    doc.setLineWidth(0.5);
+    doc.setLineDashPattern([2, 2], 0); // Borda tracejada
+    doc.rect(15, 15, 180, 200, 'FD'); // Fill e Draw (Pinta e faz a borda)
+
+    // Reseta o tracejado
+    doc.setLineDashPattern([], 0);
+
+    // Título
+    doc.setFont("courier", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.text("BE-VAULT EMERGENCY KIT", 25, 30);
+
+    // Rótulo
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Secret Key:", 25, 50);
+
+    // Caixa da chave (.key-box)
+    doc.setFillColor(0, 0, 0); // Fundo preto
+    doc.setDrawColor(51, 51, 51); // Borda sólida #333
+    doc.setLineWidth(0.3);
+    doc.rect(25, 55, 160, 45, 'FD');
+
+    // Chave secreta
+    doc.setFont("courier", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(255, 255, 255);
+    
+    // Divide o texto automaticamente para caber na caixinha
+    const splitKey = doc.splitTextToSize(props.secretKey, 150);
+    // A altura de início do texto na caixinha
+    doc.text(splitKey, 30, 65);
+
+    // Texto da seção QR Code
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(163, 163, 163); // #a3a3a3
+    doc.text("Você pode escanear o QR Code abaixo para acesso rápido em dispositivos móveis:", 105, 120, { align: "center" });
+
+    // Fundo branco pro QR Code (.qr-code-wrapper)
+    doc.setFillColor(255, 255, 255);
+    doc.rect(75, 130, 60, 60, 'F');
+
+    // Pega a imagem do QR Code renderizado no canvas
+    const canvas = document.querySelector('.qr-code-wrapper canvas') as HTMLCanvasElement;
+    if (canvas) {
+        const qrDataUrl = canvas.toDataURL("image/png");
+        // Centraliza o QR Code com um pequeno "padding" branco (2mm de cada lado)
+        doc.addImage(qrDataUrl, "PNG", 77, 132, 56, 56);
+    }
+    
+    doc.save("be-vault-emergency-kit.pdf");
 }
 </script>
 
@@ -37,7 +113,12 @@ function downloadEmergencyKit(){
     <div v-if="show" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>ZERO-KNOWLEDGE BACKUP</h2>
+                <div class="header-top">
+                    <button class="back-btn" @click="emit('close')" title="Voltar">
+                        <ArrowLeft :size="20" />
+                    </button>
+                    <h2>ZERO-KNOWLEDGE BACKUP</h2>
+                </div>
                 <p>Nós não armazenamos a sua Secret Key. Se você perdê-la, seus dados serão perdidos para sempre.</p>
             </div>
         <div id="emergency-kit-card" class="emergency-kit">
@@ -49,17 +130,17 @@ function downloadEmergencyKit(){
             <div class="qr-section">
                 <p>Você pode escanear o QR Code abaixo para acesso rápido em dispositivos móveis:</p>
                 <div class="qr-code-wrapper">
-                    <qrcode-vue :value="qrCodeUrl" :size="150" level="M" render-as="svg"/>
+                    <qrcode-vue :value="qrCodeUrl" :size="150" level="M" render-as="canvas"/>
                 </div>
             </div>
         </div>
 
         <div class="modal-actions">
-            <button type="button" class="btn-outline" @click="emit('close')">
-                Voltar
-            </button>
             <button type="button" class="btn-outline" @click="copyKey">
-                Copiar Chave
+                Copiar
+            </button>
+            <button type="button" class="btn-outline" @click="downloadTxt">
+                Baixar TXT
             </button>
             <button type="button" class="btn-outline" @click="downloadEmergencyKit">
                 Baixar PDF
@@ -91,12 +172,11 @@ function downloadEmergencyKit(){
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85); /* Fundo bem escuro pra destacar */
+    background-color: rgba(0, 0, 0, 0.95); /* Fundo mais escuro no lugar do blur */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    backdrop-filter: blur(4px);
 }
 .modal-content {
     background-color: var(--bg-app);
@@ -108,11 +188,31 @@ function downloadEmergencyKit(){
     flex-direction: column;
     gap: 1.5rem;
 }
-.modal-header h2 {
+.header-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+.header-top h2 {
     color: var(--destructive);
     font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     letter-spacing: 0.05em;
+}
+.back-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+.back-btn:hover {
+    color: var(--text-primary);
 }
 .modal-header p {
     color: var(--text-secondary);
@@ -216,44 +316,4 @@ function downloadEmergencyKit(){
 }
 
 </style>
-
-<style>
-/* 
-  ESTILOS GLOBAIS DE IMPRESSÃO
-*/
-@media print {
-    /* Esconde absolutamente tudo na tela */
-    body * {
-        visibility: hidden;
-    }
-    
-    /* Remove margens da folha A4 e fundos padrão */
-    @page {
-        margin: 0;
-    }
-
-    /* Torna visível APENAS o nosso cartão e os filhos dele */
-    #emergency-kit-card, #emergency-kit-card * {
-        visibility: visible;
-    }
-
-    /* Posiciona o cartão no topo esquerdo da folha de impressão */
-    #emergency-kit-card {
-        position: absolute;
-        left: 5%;
-        top: 5%;
-        width: 90%;
-        margin: 0;
-        padding: 2rem;
-        /* Forçamos a impressão dos backgrounds (cores de fundo) */
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    /* Garante que o QR Code será impresso perfeitamente */
-    .qr-code-wrapper {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-}
-</style>
+

@@ -37,6 +37,10 @@
             // Se o usuário veio pelo link, mudamos para a aba de "Access" e já preenchemos a chave!
             isRegistering.value = false;
         }
+
+        if (route.query.email) {
+            email.value = route.query.email as string;
+        }
     }); 
 
     async function handleAccess(){
@@ -198,6 +202,7 @@
     <BackupModal 
     :show="showBackupModal" 
     :secretKey="currentKey"
+    :email="email"
     @proceed="proceedToVault"
     @close="showBackupModal = false"
     />
