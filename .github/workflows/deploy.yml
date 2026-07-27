@@ -1,0 +1,39 @@
+name: Deploy to Oracle Cloud
+
+on:
+  push:
+    branches:
+      - main
+      - develop # Dispara quando fizer push na develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Puxa o código do seu repositório
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Prepara o ambiente Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 3. Instala as dependências e faz o Build do Vue (gera a pasta dist/)
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+
+      # 4. Envia a pasta dist para a sua VPS na Oracle via SCP (Seguro)
+      - name: Copy files via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.ORACLE_HOST }} # O IP público da sua Oracle VPS
+          username: ${{ secrets.ORACLE_USERNAME }} # Seu usuário (geralmente ubuntu ou opc)
+          key: ${{ secrets.ORACLE_SSH_KEY }} # Sua chave privada de acesso SSH
+          source: "dist/"
+          target: "/home/ubuntu/be-vault" # A pasta do Host que está mapeada no Docker (Volume)
+          strip_components: 1 # Remove a subpasta "dist" e manda só o conteúdo dentro dela
