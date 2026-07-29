@@ -27,7 +27,13 @@ jobs:
           npm install
           npm run build
 
-      # 4. Envia a pasta dist para a sua VPS na Oracle via SCP (Seguro)
+      # 4. Conecta na sua VPN Tailscale
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      # 5. Envia a pasta dist para a sua VPS na Oracle via SCP (Seguro por dentro da VPN)
       - name: Copy files via SSH
         uses: appleboy/scp-action@v0.1.7
         with:
