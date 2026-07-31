@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { onMounted } from 'vue'
-    import { useRouter } from 'vue-router'
+    import { useRouter, useRoute } from 'vue-router'
     import { useVaultStore } from '../stores/vaultStore'
     import { activeCryptoKey, restoreCryptoKey } from '../stores/keyStore'
     import { fetchAndDecryptVaultItems, deleteVaultItem } from '../services/vault'
@@ -14,6 +14,7 @@
 
     const vaultStore = useVaultStore()
     const router = useRouter()
+    const route = useRoute()
     
     const activeTab = ref('all-items')
 
@@ -43,7 +44,7 @@
         // Se a chave não estiver na memória (ex: o usuário recarregou a página), volta pro login.
         if (!activeCryptoKey.value) {
             console.warn("Chave criptográfica não encontrada. Redirecionando para login...")
-            router.push('/login')
+            router.push({ path: '/login', query: route.query })
             return
         }
 
