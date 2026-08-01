@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Globe, Copy, Pencil, Trash } from '@lucide/vue'
 import type { VaultItem } from '../../stores/vaultStore'
 
@@ -8,6 +8,15 @@ const isCopied = ref(false);
 const props = defineProps<{
     data: VaultItem
 }>()
+
+const formattedDate = computed(() => {
+    if (!props.data.created_at) return '';
+    const date = new Date(props.data.created_at);
+    const day = String(date.getDate()).padStart(2, '0');
+    // toLocaleString with pt-BR gives e.g. "ago."
+    const month = date.toLocaleString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase();
+    return `${day} ${month}`;
+});
 
 const copyPassword = async () => {
     if(props.data.password) {
@@ -33,7 +42,7 @@ const emit = defineEmits(['edit', 'delete'])
             </div>
             <div class="meta-info">
                 <span class="eyebrow">LOGIN</span>
-                <span class="eyebrow">13D AGO</span>
+                <span class="eyebrow">{{ formattedDate }}</span>
             </div>
         </div>
         <div class="card-mid">

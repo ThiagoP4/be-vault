@@ -1,19 +1,23 @@
 <script setup lang="ts">
     import { onMounted } from 'vue'
-    import { useRouter } from 'vue-router'
+    import { useRouter, useRoute } from 'vue-router'
     import { useVaultStore } from '../stores/vaultStore'
     import { activeCryptoKey, restoreCryptoKey } from '../stores/keyStore'
     import { fetchAndDecryptVaultItems, deleteVaultItem } from '../services/vault'
     import SideBar from '../components/Vaults/SidebarVault.vue'
     import HeaderVault from '../components/Vaults/HeaderVault.vue'
     import CardsVault from '../components/Vaults/CardVault.vue'
+    import EmergencyKit from '../components/Vaults/EmergencyKit.vue'
     import EditEntryModal from '../components/Vaults/EditEntryModal.vue'
     import { ref } from 'vue'
     import type { VaultItem } from '../stores/vaultStore'
 
     const vaultStore = useVaultStore()
     const router = useRouter()
+    const route = useRoute()
     
+    const activeTab = ref('all-items')
+
     const editingItem = ref<VaultItem | null>(null)
     const isEditModalOpen = ref(false)
 
@@ -40,7 +44,7 @@
         // Se a chave não estiver na memória (ex: o usuário recarregou a página), volta pro login.
         if (!activeCryptoKey.value) {
             console.warn("Chave criptográfica não encontrada. Redirecionando para login...")
-            router.push('/login')
+            router.push({ path: '/login', query: route.query })
             return
         }
 
@@ -57,10 +61,10 @@
 
 <template>
     <div class="vault-layout">
-        <SideBar />
+        <SideBar :activeTab="activeTab" @changeTab="(tab) => activeTab = tab" />
         <main class="main-area">
         <HeaderVault />
-        <div class="content-wrapper">
+        <div class="content-wrapper" v-if="activeTab === 'all-items'">
             <div class="content-header">
                 <h2>PRIMARY VAULT</h2>
                 <span>ENTRIES FOUND</span>
@@ -73,6 +77,9 @@
                     @edit="handleEdit"
                     @delete="handleDelete" />
             </div>
+        </div>
+        <div class="content-wrapper" v-else-if="activeTab === 'emergency-kit'">
+            <EmergencyKit />
         </div>
         <EditEntryModal 
             v-if="isEditModalOpen && editingItem" 

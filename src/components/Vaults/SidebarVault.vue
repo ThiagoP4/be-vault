@@ -3,6 +3,14 @@
     import AppLogo from '../AppLogo.vue' // Ajuste o caminho se a Sidebar estiver dentro da pasta Vaults
     import { Lock, Menu, X } from '@lucide/vue'
 
+    defineProps<{
+        activeTab: string
+    }>();
+
+    const emit = defineEmits<{
+        (e: 'changeTab', Tab: string): void
+    }>();
+
     const isMenuOpen = ref(false)
 </script>
 <template>
@@ -12,10 +20,14 @@
     <nav class="menu-section" :class="{ 'is-open': isMenuOpen }">
         <span class="eyebrow">Storage</span>
         <ul>
-            <li class="active">All items</li>
-            <li>Logins</li>
-            <li>Cards</li>
-            <li>Notes</li>
+            <li :class="{ active: activeTab === 'all-items'}" @click="emit('changeTab', 'all-items')">All items</li>
+            <li :class="{ active: activeTab === 'logins' }" @click="emit('changeTab', 'logins')">Logins</li>
+            <li :class="{ active: activeTab === 'cards' }" @click="emit('changeTab', 'cards')">Cards</li>
+            <li :class="{ active: activeTab === 'notes' }" @click="emit('changeTab', 'notes')">Notes</li>
+        </ul>
+        <span class="eyebrow" style="margin-top: 2rem; display: block;">Security</span>
+        <ul>
+            <li :class="{ active: activeTab === 'emergency-kit' }" @click="emit('changeTab', 'emergency-kit')">Emergency Kit</li>
         </ul>
     </nav>
     <div class="sidebar-footer">
