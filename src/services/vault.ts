@@ -26,11 +26,13 @@ export async function fetchAndDecryptVaultItems() {
     for (const row of data as unknown as EncryptedVaultRow[]) {
         try {
             const decryptedPassword = await decryptData(row.encrypted_data, activeCryptoKey.value);
+            const decryptService = await decryptData(row.service_name, activeCryptoKey.value);
+            const decryptUsername = await decryptData(row.username, activeCryptoKey.value);
             
             decryptedItems.push({
                 id_vault: row.id_vault,
-                service_name: row.service_name,
-                username: row.username,
+                service_name: decryptService,
+                username: decryptUsername,
                 password: decryptedPassword,
                 created_at: row.created_at
             });
@@ -47,15 +49,18 @@ export async function addEncryptedVaultItem(service_name: string, username: stri
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Usuário não autenticado.");
 
-    // 1. Criptografa a senha pura
+    // 1. Criptografa os dados
     const encryptedData = await encryptData(plainPassword, activeCryptoKey.value);
+    const encryptedService = await encryptData(service_name, activeCryptoKey.value);
+    const encryptedUsername = await encryptData(username, activeCryptoKey.value);
+
     // 2. Salva no banco (Supabase NUNCA vai saber qual é a plainPassword)
     const { data, error } = await supabase
         .from('vault_items')
         .insert({
             user_id: user.id,
-            service_name,
-            username,
+            service_name: encryptedService,
+            username: encryptedUsername,
             encrypted_data: encryptedData
         })
         .select()
@@ -66,8 +71,8 @@ export async function addEncryptedVaultItem(service_name: string, username: stri
     // Retorna o item já descriptografado para injetarmos na Store imediatamente
     return {
         id_vault: data.id_vault,
-        service_name: data.service_name,
-        username: data.username,
+        service_name: service_name,
+        username: username,
         password: plainPassword,
         created_at: data.created_at
     };
@@ -84,7 +89,7 @@ export async function deleteVaultItem(id: string) {
 
 export async function updateEncryptedVaultItem(id: string, service_name: string, username: string, plainPassword?: string) {
     if (!activeCryptoKey.value) throw new Error("Cofre trancado.");
-    const updateData: any = { service_name, username };
+    const updateData: any = { service_name: await encryptData(service_name, activeCryptoKey.value), username: await encryptData(username, activeCryptoKey.value) };
     
     // Só criptografa a senha de novo se o usuário tiver digitado uma senha nova
     if (plainPassword) {

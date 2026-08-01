@@ -60,7 +60,7 @@ const handleSubmit = () => {
         <div class="label-row">
             <label for="identity" class="eyebrow">IDENTITY</label>
         </div>
-        <input id="identity" type="email" placeholder="@bevault.io" v-model="identity">
+        <input id="identity" type="text" placeholder="@bevault.io" v-model="identity">
     </div>
     <div class="input-group">
         <div class="label-row">
