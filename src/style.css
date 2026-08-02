@@ -122,3 +122,43 @@ body {
   background-color: var(--neon);
   box-shadow: 0 0 6px var(--neon);
 }
+
+/* ====================================================
+   GLOBAL CARDS (BE-VAULT)
+   ==================================================== */
+.bv-card {
+    background-color: var(--bg-panel-left);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.bv-card-info {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.bv-card-title {
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin: 0.25rem 0;
+    color: var(--text-primary);
+}
+
+.bv-card-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.bv-card-title {
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin: 0.25rem 0;
+    color: var(--text-primary);
+}
+
+.bv-card-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+}

@@ -9,6 +9,7 @@
     import CardsVault from '../components/Vaults/CardVault.vue'
     import EmergencyKit from '../components/Vaults/EmergencyKit.vue'
     import EditEntryModal from '../components/Vaults/EditEntryModal.vue'
+    import ProfileVault from '../components/Profile/ProfileVault.vue'
     import { ref } from 'vue'
     import type { VaultItem } from '../stores/vaultStore'
 
@@ -63,15 +64,15 @@
     <div class="vault-layout">
         <SideBar :activeTab="activeTab" @changeTab="(tab) => activeTab = tab" />
         <main class="main-area">
-        <HeaderVault />
+        <HeaderVault v-if="activeTab === 'all-items'" />
         <div class="content-wrapper" v-if="activeTab === 'all-items'">
             <div class="content-header">
                 <h2>PRIMARY VAULT</h2>
-                <span>ENTRIES FOUND</span>
+                <span class="eyebrow">ENTRIES FOUND</span>
             </div>
             <div class="cards-grid">
                 <CardsVault
-                    v-for="item in vaultStore.items"
+                    v-for="item in vaultStore.filteredItems"
                     :key="item.id_vault"
                     :data="item"
                     @edit="handleEdit"
@@ -80,6 +81,9 @@
         </div>
         <div class="content-wrapper" v-else-if="activeTab === 'emergency-kit'">
             <EmergencyKit />
+        </div>
+        <div class="content-wrapper" v-else-if="activeTab === 'profile'">
+            <ProfileVault />
         </div>
         <EditEntryModal 
             v-if="isEditModalOpen && editingItem" 
@@ -108,8 +112,19 @@
     display: grid;
     grid-template-columns: repeat(2,  1fr);
     gap: 1.5rem;
-    margin-top: 2rem;
 }
+
+.content-header {
+    margin-bottom: 2rem;
+}
+
+.content-header h2 {
+    font-size: 1.25rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
 
 /* =========================================
    RESPONSIVIDADE (TABLET)

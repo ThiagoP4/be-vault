@@ -103,3 +103,35 @@ export async function updateEncryptedVaultItem(id: string, service_name: string,
     if (error) throw error;
 
 }
+
+export async function rotateVaultKey(items: any[], newKey: CryptoKey, onProgress?: (percentage: number) => void) {
+    if (!activeCryptoKey.value) throw new Error("Cofre trancado.");
+
+    let processed = 0;
+    const total = items.length;
+
+    for (const item of items) {
+        // Re-criptografa os dados com a NOVA chave
+        const encryptedService = await encryptData(item.service_name, newKey);
+        const encryptedUsername = await encryptData(item.username, newKey);
+        const encryptedPassword = await encryptData(item.password || '', newKey);
+
+        const { error } = await supabase
+            .from('vault_items')
+            .update({
+                service_name: encryptedService,
+                username: encryptedUsername,
+                encrypted_data: encryptedPassword
+            })
+            .eq('id_vault', item.id_vault);
+            
+        if (error) throw error;
+
+        // Atualiza o progresso
+        processed++;
+        if (onProgress && total > 0) {
+            const percentage = Math.round((processed / total) * 100);
+            onProgress(percentage);
+        }
+    }
+}

@@ -33,11 +33,11 @@ function copyKey() {
             <h2>EMERGENCY KIT</h2>
             <span class="eyebrow">RECOVERY & EXPORT</span>
         </div>
-        <div class="kit-card">
-            <div class="card-info">
+        <div class="bv-card">
+            <div class="bv-card-info">
                 <span class="eyebrow">01 · EXPORT</span>
-                <h3>Vault ledger</h3>
-                <p>Encrypted JSON backup of all entries. Requires your master passphrase to decrypt.</p>
+                <h3 class="bv-card-title">Vault ledger</h3>
+                <p class="bv-card-subtitle">Encrypted JSON backup of all entries. Requires your master passphrase to decrypt.</p>
             </div>
             <div class="card-actions">
                 <button class="btn-outline" @click="exportVault">
@@ -46,12 +46,12 @@ function copyKey() {
                 </button>
             </div>
         </div>
-        <div class="kit-card">
-            <div class="card-info card-info-split">
+        <div class="bv-card">
+            <div class="bv-card-info card-info-split" style="border-bottom: none;">
                 <div class="card-info-text">
                     <span class="eyebrow">02 · SECRET KEY</span>
-                    <h3>Emergency recovery key</h3>
-                    <p>Combined with your master passphrase to unseal the vault on a new device.</p>
+                    <h3 class="bv-card-title">Emergency recovery key</h3>
+                    <p class="bv-card-subtitle">Combined with your master passphrase to unseal the vault on a new device.</p>
                 </div>
                 <!-- Movido para o lado do título, com tamanho reduzido para ficar elegante -->
                 <div class="qr-code-wrapper" title="Scan for mobile access">
@@ -101,30 +101,6 @@ function copyKey() {
     font-weight: 300;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-}
-
-.kit-card {
-    background-color: var(--bg-panel-left);
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-}
-
-.card-info {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.card-info h3 {
-    font-size: 1.1rem;
-    font-weight: 400;
-    margin: 0.25rem 0;
-    color: var(--text-primary);
-}
-
-.card-info p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
 }
 
 .card-actions {

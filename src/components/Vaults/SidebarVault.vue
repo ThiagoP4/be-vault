@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref } from 'vue'
-    import AppLogo from '../AppLogo.vue' // Ajuste o caminho se a Sidebar estiver dentro da pasta Vaults
+    import AppLogo from '../AppLogo.vue'
     import { Lock, Menu, X } from '@lucide/vue'
 
     defineProps<{
@@ -24,10 +24,11 @@
             <li :class="{ active: activeTab === 'logins' }" @click="emit('changeTab', 'logins')">Logins</li>
             <li :class="{ active: activeTab === 'cards' }" @click="emit('changeTab', 'cards')">Cards</li>
             <li :class="{ active: activeTab === 'notes' }" @click="emit('changeTab', 'notes')">Notes</li>
-        </ul>
         <span class="eyebrow" style="margin-top: 2rem; display: block;">Security</span>
         <ul>
             <li :class="{ active: activeTab === 'emergency-kit' }" @click="emit('changeTab', 'emergency-kit')">Emergency Kit</li>
+            <li :class="{ active: activeTab === 'profile' }" @click="emit('changeTab', 'profile')">Profile</li>
+        </ul>
         </ul>
     </nav>
     <div class="sidebar-footer">

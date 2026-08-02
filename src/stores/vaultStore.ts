@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 export interface VaultItem {
     id_vault: string;
@@ -11,6 +11,18 @@ export interface VaultItem {
 
 export const useVaultStore = defineStore('vault', () => {
     const items = ref<VaultItem[]>([])
+    const searchQuery = ref('')
+
+    const filteredItems = computed(() => {
+
+        if(!searchQuery.value) return items.value;
+
+        const lowerQuery = searchQuery.value.toLowerCase();
+        return items.value.filter(item =>
+            item.service_name.toLowerCase().includes(lowerQuery) || 
+            item.username.toLowerCase().includes(lowerQuery)
+        )
+    })
     
     function setItems(newItems: VaultItem[]) {
         items.value = newItems;
@@ -34,5 +46,5 @@ export const useVaultStore = defineStore('vault', () => {
     function clearVault() {
         items.value = []
     }
-    return { items, setItems, addItem, removeItem, updateItem, clearVault }
+    return { items, searchQuery, filteredItems, setItems, addItem, removeItem, updateItem, clearVault }
 })

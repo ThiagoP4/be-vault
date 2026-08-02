@@ -35,7 +35,7 @@ const emit = defineEmits(['edit', 'delete'])
 </script>
 
 <template>
-    <div class="vault-card">
+    <div class="bv-card vault-card">
         <div class="card-top">
             <div class="icon-box">
                 <Globe :size="16" />
@@ -46,8 +46,8 @@ const emit = defineEmits(['edit', 'delete'])
             </div>
         </div>
         <div class="card-mid">
-            <h3>{{ props.data.service_name }}</h3>
-            <p>{{ props.data.username }}</p>
+            <h3 class="bv-card-title">{{ props.data.service_name }}</h3>
+            <p class="bv-card-subtitle">{{ props.data.username }}</p>
         </div>
         <div class="card-bottom">
             <span class="password-dots">.........</span>
@@ -70,11 +70,7 @@ const emit = defineEmits(['edit', 'delete'])
 
 <style scoped>
 .vault-card {
-    background-color: var(--bg-panel-left);
     padding: 1.5rem;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
     gap: 1.5rem;
 }
 
@@ -99,18 +95,6 @@ const emit = defineEmits(['edit', 'delete'])
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
-}
-
-.card-mid h3 {
-    font-size: 1rem;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-.card-mid p {
-    font-size: 0.75rem;
-    color: var(--text-muted);
 }
 
 .card-bottom {

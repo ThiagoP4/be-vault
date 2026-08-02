@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Search } from '@lucide/vue'
+import { useVaultStore } from '../../stores/vaultStore'
 import NewEntry from '../Vaults/NewEntryModal.vue'
 
 const isEntryOpen = ref(false);
+
+const vaultStore = useVaultStore();
 
 </script>
 
@@ -11,7 +14,7 @@ const isEntryOpen = ref(false);
     <header class="topbar">
         <div class="search-box">
             <Search />
-        <input type="text" placeholder="Search your passwords..." />
+        <input type="text" placeholder="Search your passwords..." v-model="vaultStore.searchQuery" />
     </div>
     <button class="btn-new" @click="isEntryOpen = true"> + NEW ENTRY </button>
     <NewEntry v-if="isEntryOpen" @close="isEntryOpen = false"/>
