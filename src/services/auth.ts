@@ -28,6 +28,11 @@ export async function signInWithEmail(email: string, password: string){
 
 };
 
+export async function updateAuthPassword(newPassword: string) {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw new Error(error.message);
+}
+
 export function generateSecretKey(): string {
     const randomBytes = new Uint8Array(32);
 

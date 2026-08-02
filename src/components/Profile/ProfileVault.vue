@@ -5,7 +5,7 @@ import { exportCryptoKey, deriveKey } from '../../utils/crypto'
 import RotateKeyModal from '../Profile/RotateKeyModal.vue'
 import { rotateVaultKey } from '../../services/vault'
 import { useVaultStore } from '../../stores/vaultStore'
-import { getSecretKey } from '../../services/auth'
+import { getSecretKey, updateAuthPassword } from '../../services/auth'
 
 const vaultStore = useVaultStore()
 
@@ -39,6 +39,9 @@ const handleRotate = async (currentPass: string, newPass: string) => {
         await rotateVaultKey(vaultStore.items, newCryptoKey, (perc) => {
             rotationProgress.value = perc;
         })
+
+        // Atualiza a senha no Supabase Auth para que o próximo login funcione com a nova senha
+        await updateAuthPassword(newPass)
 
         await setCryptoKey(newCryptoKey)
         
