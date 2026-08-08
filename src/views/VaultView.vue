@@ -10,10 +10,13 @@
     import EmergencyKit from '../components/Vaults/EmergencyKit.vue'
     import EditEntryModal from '../components/Vaults/EditEntryModal.vue'
     import ProfileVault from '../components/Profile/ProfileVault.vue'
+    import ConfirmDeleteModal from '../components/Vaults/ConfirmDeleteModal.vue'
     import { ref } from 'vue'
     import type { VaultItem } from '../stores/vaultStore'
+    import { useUiStore } from '../stores/uiStore'
 
     const vaultStore = useVaultStore()
+    const uiStore = useUiStore()
     const router = useRouter()
     const route = useRoute()
     
@@ -21,16 +24,28 @@
 
     const editingItem = ref<VaultItem | null>(null)
     const isEditModalOpen = ref(false)
+    
+    const itemToDelete = ref<VaultItem | null>(null)
+    const isDeleteModalOpen = ref(false)
 
-    const handleDelete = async (id: string) => {
-        if(confirm("Tem certeza que deseja deletar esta senha?")) {
-            try {
-                await deleteVaultItem(id)
-                vaultStore.removeItem(id)
-            } catch (error) {
-                console.error("Erro ao deletar:", error)
-                alert("Erro ao deletar a senha.")
-            }
+    const requestDelete = (item: VaultItem) => {
+        itemToDelete.value = item
+        isDeleteModalOpen.value = true
+    }
+
+    const handleDeleteConfirm = async () => {
+        if (!itemToDelete.value) return;
+        
+        try {
+            await deleteVaultItem(itemToDelete.value.id_vault)
+            vaultStore.removeItem(itemToDelete.value.id_vault)
+            uiStore.showToast("Senha deletada com sucesso!", "success")
+        } catch (error) {
+            console.error("Erro ao deletar:", error)
+            uiStore.showToast("Erro ao deletar a senha.", "error")
+        } finally {
+            isDeleteModalOpen.value = false
+            itemToDelete.value = null
         }
     }
 
@@ -75,8 +90,8 @@
                     v-for="item in vaultStore.filteredItems"
                     :key="item.id_vault"
                     :data="item"
-                    @edit="handleEdit"
-                    @delete="handleDelete" />
+                    @edit="handleEdit(item)"
+                    @delete="requestDelete(item)" />
             </div>
         </div>
         <div class="content-wrapper" v-else-if="activeTab === 'emergency-kit'">
@@ -89,6 +104,12 @@
             v-if="isEditModalOpen && editingItem" 
             :item="editingItem" 
             @close="isEditModalOpen = false" 
+        />
+        <ConfirmDeleteModal
+            v-if="isDeleteModalOpen"
+            :itemName="itemToDelete?.service_name"
+            @close="isDeleteModalOpen = false"
+            @confirm="handleDeleteConfirm"
         />
         </main>
     </div>

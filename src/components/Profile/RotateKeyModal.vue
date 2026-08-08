@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Eye, EyeOff } from '@lucide/vue';
+import { useUiStore } from '../../stores/uiStore'
+
+const uiStore = useUiStore()
 
 const props = defineProps<{
     isRotating: boolean;
@@ -16,11 +19,11 @@ const showPasswords = ref(false)
 
 const handleSubmit = () => {
     if(newPassword.value !== confirmPassword.value) {
-        alert("A nova senha e a confirmação não batem!")
+        uiStore.showToast("A nova senha e a confirmação não batem!", "error")
         return
     }
     if(!currentPassword.value || !newPassword.value) {
-        alert("Preencha todos os campos!")
+        uiStore.showToast("Preencha todos os campos!", "warning")
         return
     }
     emit('rotate', currentPassword.value, newPassword.value)
@@ -97,7 +100,7 @@ const handleSubmit = () => {
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" @click="$emit('close')" :disabled="isRotating">CANCEL</button>
                     <button type="submit" class="btn-danger" :disabled="isRotating">
-                        {{ isRotating ? 'ROTATING...' : 'CONFIRM ROTATION' }}
+                        {{ isRotating ? 'UPDATING...' : 'CONFIRM' }}
                     </button>
                 </div>
             </form>

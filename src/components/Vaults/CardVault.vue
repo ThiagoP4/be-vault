@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { Globe, Copy, Pencil, Trash } from '@lucide/vue'
+import { useUiStore } from '../../stores/uiStore'
 import type { VaultItem } from '../../stores/vaultStore'
 
+const uiStore = useUiStore()
 const isCopied = ref(false);
 
 const props = defineProps<{
@@ -22,12 +24,13 @@ const copyPassword = async () => {
     if(props.data.password) {
         await navigator.clipboard.writeText(props.data.password)
         isCopied.value = true
+        uiStore.showToast("Senha copiada!", "success")
 
         setTimeout(() => {
             isCopied.value = false
         }, 2000)
     } else {
-        alert("Não há senha salva para este item")
+        uiStore.showToast("Não há senha salva para este item", "warning")
     }
 }
 

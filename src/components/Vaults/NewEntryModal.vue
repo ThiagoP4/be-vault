@@ -2,13 +2,15 @@
     import EntryForm from '../Shared/EntryForm.vue';
     import { addEncryptedVaultItem } from '../../services/vault';
     import { useVaultStore } from '../../stores/vaultStore'
+    import { useUiStore } from '../../stores/uiStore'
 
     const emit = defineEmits(['close']);
     const vaultStore = useVaultStore();
+    const uiStore = useUiStore();
 
     const handleSave = async (data: any) => {
         if(!data.serviceName || !data.identity || !data.password) {
-            alert("Preencha todos os campos obrigatórios!");
+            uiStore.showToast("Preencha todos os campos obrigatórios!", "warning");
             return;
         }
 
@@ -20,11 +22,12 @@
             );
         
             vaultStore.addItem(novoItem);
+            uiStore.showToast("Entrada criada com sucesso!", "success");
             emit('close');
         }
         catch (error) {
             console.error(error);
-            alert("Erro ao salvar senha no supabase;")
+            uiStore.showToast("Erro ao salvar senha no supabase", "error")
         }
     }
 </script>

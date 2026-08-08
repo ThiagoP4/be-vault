@@ -3,6 +3,9 @@ import { ref, computed } from 'vue';
 import QrcodeVue from 'qrcode.vue';
 import { generateTxt, generatePdf, getQrCodeUrl } from '../../utils/backupGenerator';
 import { ArrowLeft } from '@lucide/vue';
+import { useUiStore } from '../../stores/uiStore';
+
+const uiStore = useUiStore();
 
 // Recebemos do LoginView a chave e se o modal deve aparecer
 const props = defineProps<{
@@ -22,9 +25,9 @@ const qrCodeUrl = computed(() => {
     return getQrCodeUrl(props.secretKey, props.email);
 });
 
-function copyKey(){
-    navigator.clipboard.writeText(props.secretKey);
-    alert('Chave copiada para a área de transferência!');
+async function copyKey(){
+    await navigator.clipboard.writeText(props.secretKey);
+    uiStore.showToast('Chave copiada para a área de transferência!', 'success');
 }
 
 function downloadTxt() {

@@ -3,6 +3,7 @@
     import { updateEncryptedVaultItem } from '../../services/vault';
     import { useVaultStore } from '../../stores/vaultStore'
     import type { VaultItem } from '../../stores/vaultStore';
+    import { useUiStore } from '../../stores/uiStore'
 
     const props = defineProps<{
         item: VaultItem
@@ -10,10 +11,11 @@
 
     const emit = defineEmits(['close']);
     const vaultStore = useVaultStore();
+    const uiStore = useUiStore();
 
     const handleUpdate = async (data: any) => {
         if(!data.serviceName || !data.identity) {
-            alert("Preencha todos os campos obrigatórios!");
+            uiStore.showToast("Preencha todos os campos obrigatórios!", "warning");
             return;
         }
 
@@ -31,11 +33,12 @@
                 username: data.identity,
                 password: data.password || props.item.password,
             });
+            uiStore.showToast("Entrada atualizada com sucesso!", "success");
             emit('close');
         }
         catch (error) {
             console.error(error);
-            alert("Erro ao atualizar senha no supabase;")
+            uiStore.showToast("Erro ao atualizar senha no supabase", "error")
         }
     }
 </script>

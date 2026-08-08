@@ -6,8 +6,10 @@ import RotateKeyModal from '../Profile/RotateKeyModal.vue'
 import { rotateVaultKey } from '../../services/vault'
 import { useVaultStore } from '../../stores/vaultStore'
 import { getSecretKey, updateAuthPassword } from '../../services/auth'
+import { useUiStore } from '../../stores/uiStore'
 
 const vaultStore = useVaultStore()
+const uiStore = useUiStore()
 
 const fingerprint = ref('CARREGANDO...')
 const showAdvanced = ref(false)
@@ -29,7 +31,7 @@ const handleRotate = async (currentPass: string, newPass: string) => {
         const checkExported = await exportCryptoKey(checkKey)
 
         if (currentExported !== checkExported) {
-            alert("Senha atual incorreta! Acesso negado.")
+            uiStore.showToast("Senha atual incorreta! Acesso negado.", "error")
             isRotating.value = false;
             return
         }
@@ -45,14 +47,14 @@ const handleRotate = async (currentPass: string, newPass: string) => {
 
         await setCryptoKey(newCryptoKey)
         
-        alert("Chave Mestre rotacionada com sucesso!")
+        uiStore.showToast("Chave Mestre rotacionada com sucesso!", "success")
         rotateEntry.value = false 
         
         window.location.reload()
 
     } catch (error) {
         console.error("Erro fatal ao rotacionar a chave", error)
-        alert("Ocorreu um erro ao rotacionar a chave.")
+        uiStore.showToast("Ocorreu um erro ao rotacionar a chave.", "error")
     } finally {
         isRotating.value = false;
     }

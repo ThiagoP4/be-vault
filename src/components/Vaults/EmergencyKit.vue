@@ -4,6 +4,9 @@ import { getSecretKey, getUserEmail } from '../../services/auth'
 import { generateTxt, generatePdf, getQrCodeUrl} from '../../utils/backupGenerator';
 import { Download, Printer, Copy } from '@lucide/vue'
 import QrcodeVue from 'qrcode.vue';
+import { useUiStore } from '../../stores/uiStore'
+
+const uiStore = useUiStore()
 
 const secretKey = ref('')
 const email = ref('')
@@ -18,12 +21,12 @@ onMounted(() => {
 });
 
 function exportVault() {
-    alert("em breve");
+    uiStore.showToast("Exportação do cofre em breve", "warning");
 }
 
 function copyKey() {
     navigator.clipboard.writeText(secretKey.value);
-    alert('Chave copiada para a área de transferência!');
+    uiStore.showToast('Chave copiada para a área de transferência!', 'success');
 }
 </script>
 
